@@ -1,33 +1,59 @@
 import utils
 
+def coursesTerminer(speedHorse, distanceHorse, distance_win):
+    for x in range(number_horse):
+        if(speedHorse[x] == "DQ"):
+            continue
+        if(distanceHorse[x] >= distance_win):
+            continue
+        return False
+    return True
+
+def afficher_barre_de_progression(distance, maxDistance):
+    taille_char = 40
+    v = distance / maxDistance
+    c = min(taille_char, int(taille_char * v))
+    x = taille_char - c
+    return ((c*"=") + (x*"-"))
+
 if __name__ == '__main__':
-    speedPerDiceRoll = {0: [0,1,1,1,2,2],
-                        1: [0,0,1,1,1,2],
-                        2: [0,0,1,1,1,2],
-                        3: [-1,0,0,1,1,1],
-                        4: [-1,0,0,0,1,1],
-                        5: [-2,-1,0,0,0,1],
-                        6:[-2,-1,0,0,0,"DQ"],}
+    speed_per_dice_roll = {0: [0, 1, 1, 1, 2, 2],
+                           1: [0,0,1,1,1,2],
+                           2: [0,0,1,1,1,2],
+                           3: [-1,0,0,1,1,1],
+                           4: [-1,0,0,0,1,1],
+                           5: [-2,-1,0,0,0,1],
+                           6:[-2,-1,0,0,0,"DQ"], }
 
     speed_horse = [0,23,46,69,92,115,138]
-    numberOfHorse = 5
-    current_speed_horse = [0]*numberOfHorse
-    current_distance_horse = [0]*numberOfHorse
+
+    number_horse = 5
+    distance_win = 2400
+
+    current_speed_horse = [0] * number_horse
+    current_distance_horse = [0] * number_horse
+
 
     while(True):
+        if(coursesTerminer(current_speed_horse, current_distance_horse, distance_win)):
+            break
         #Effectuer un tour
-        for x in range(numberOfHorse):
+        newSpeed = 0
+        currentDistance = 0
+
+        for x in range(number_horse):
             if current_speed_horse[x] == "DQ":
+                print(f"{x} -> Disqualifié")
                 continue
+            print(f"{x} -> {afficher_barre_de_progression(current_distance_horse[x], distance_win)} ({current_distance_horse[x]}/{distance_win}) vitesse: {current_speed_horse[x]}")
             resultatDe = utils.rollADiche()
             currentSpeed = current_speed_horse[x]
-            if speedPerDiceRoll[currentSpeed][resultatDe-1] == "DQ":
+            if speed_per_dice_roll[currentSpeed][resultatDe - 1] == "DQ":
+                print("Disqualifié")
                 current_speed_horse[x] = "DQ"
                 continue
-            newSpeed = currentSpeed + speedPerDiceRoll[currentSpeed][resultatDe-1]
+            newSpeed = currentSpeed + speed_per_dice_roll[currentSpeed][resultatDe - 1]
             current_speed_horse[x] = newSpeed
             currentDistance = current_distance_horse[x] + speed_horse[newSpeed]
             current_distance_horse[x] = currentDistance
-        print(current_speed_horse)
-        print(current_distance_horse)
         input("Next? ")
