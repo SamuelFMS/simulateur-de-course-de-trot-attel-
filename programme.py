@@ -1,5 +1,10 @@
 import utils
+from enum import Enum
 
+class TypeRace(Enum):
+    Tierce = 3
+    Quatre = 4
+    Quinte = 5
 def coursesTerminer(speedHorse, distanceHorse, distance_win):
     for x in range(number_horse):
         if(speedHorse[x] == "DQ"):
@@ -9,6 +14,10 @@ def coursesTerminer(speedHorse, distanceHorse, distance_win):
         return False
     return True
 
+def verifSaisieTypeRace(saisie):
+    if saisie == "A" or (saisie == "B" or saisie == "C"):
+        return True
+    return False
 def afficher_barre_de_progression(distance, maxDistance):
     taille_char = 40
     v = distance / maxDistance
@@ -27,18 +36,25 @@ if __name__ == '__main__':
 
     speed_horse = [0,23,46,69,92,115,138]
 
+    distance_win = 2400
+    nouveauclassement = 1
+
+    #Nombre de cheval
     while True:
         number_horse = utils.askNumber("Entrez le nombres de chevaux: ")
         if number_horse >= 15 and number_horse <= 20:
             break
         print("Nombre entre 15 et 20 attendus")
-    distance_win = 2400
+
+    #Type de course
+
+    saisiTypeDeCourse = utils.askCondition(verifSaisieTypeRace, "Voulez vous faire un tiercé (A) ou un quatré (B) ou un quinté (C)")
+    type_race = TypeRace.Tierce if saisiTypeDeCourse == "A" else TypeRace.Quatre if saisiTypeDeCourse == "B" else TypeRace.Quinte
+    print(type_race)
 
     current_speed_horse = [0] * number_horse
     current_distance_horse = [0] * number_horse
     classement_horse = [0] * number_horse
-    nouveauclassement = 1
-
     while(True):
         if(coursesTerminer(current_speed_horse, current_distance_horse, distance_win)):
             break

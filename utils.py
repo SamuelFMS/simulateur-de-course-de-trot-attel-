@@ -12,7 +12,6 @@ def askNumber(message = None, erroMessage = None):
             print("Incorrect input" if erroMessage is None else erroMessage)
 
 def askCondition(Condition, message = None, erroMessage = None):
-    print(type(Condition))
     while True:
         saisi = input("Entrer: " if message is None else message)
         if(Condition(saisi)):
