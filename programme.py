@@ -27,12 +27,17 @@ if __name__ == '__main__':
 
     speed_horse = [0,23,46,69,92,115,138]
 
-    number_horse = 5
+    while True:
+        number_horse = utils.askNumber("Entrez le nombres de chevaux: ")
+        if number_horse >= 15 and number_horse <= 20:
+            break
+        print("Nombre entre 15 et 20 attendus")
     distance_win = 2400
 
     current_speed_horse = [0] * number_horse
     current_distance_horse = [0] * number_horse
-
+    classement_horse = [0] * number_horse
+    nouveauclassement = 1
 
     while(True):
         if(coursesTerminer(current_speed_horse, current_distance_horse, distance_win)):
@@ -41,9 +46,13 @@ if __name__ == '__main__':
         newSpeed = 0
         currentDistance = 0
 
+        classement = nouveauclassement
         for x in range(number_horse):
             if current_speed_horse[x] == "DQ":
                 print(f"{x} -> Disqualifié")
+                continue
+            if(current_distance_horse[x] >= distance_win):
+                print(f"{x} -> {classement_horse[x]}")
                 continue
             print(f"{x} -> {afficher_barre_de_progression(current_distance_horse[x], distance_win)} ({current_distance_horse[x]}/{distance_win}) vitesse: {current_speed_horse[x]}")
             resultatDe = utils.rollADiche()
@@ -56,4 +65,13 @@ if __name__ == '__main__':
             current_speed_horse[x] = newSpeed
             currentDistance = current_distance_horse[x] + speed_horse[newSpeed]
             current_distance_horse[x] = currentDistance
+            if (current_distance_horse[x] >= distance_win):
+                classement_horse[x] = classement
+                nouveauclassement+=1
+
         input("Next? ")
+
+    print("\n")
+    print("======= Classement Finale =======")
+    for x in range(number_horse):
+        print(f"{x} -> {"Disqualifié" if classement_horse[x] == 0 else classement_horse[x]}")
