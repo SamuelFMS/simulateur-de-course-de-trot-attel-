@@ -42,9 +42,9 @@ if __name__ == '__main__':
     #Nombre de cheval
     while True:
         number_horse = utils.askNumber("Entrez le nombres de chevaux: ")
-        if number_horse >= 15 and number_horse <= 20:
+        if number_horse >= 12 and number_horse <= 20:
             break
-        print("Nombre entre 15 et 20 attendus")
+        print("Nombre entre 12 et 20 attendus")
 
     #Type de course
 
