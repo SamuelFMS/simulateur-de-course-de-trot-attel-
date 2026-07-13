@@ -55,9 +55,12 @@ if __name__ == '__main__':
     current_speed_horse = [0] * number_horse
     current_distance_horse = [0] * number_horse
     classement_horse = [0] * number_horse
+    nombreTour = 0
     while(True):
         if(coursesTerminer(current_speed_horse, current_distance_horse, distance_win)):
             break
+        nombreTour += 1
+        print(f"Tour {nombreTour}")
         #Effectuer un tour
         newSpeed = 0
         currentDistance = 0
@@ -86,8 +89,15 @@ if __name__ == '__main__':
                 nouveauclassement+=1
 
         input("Next? ")
+        print("\n")
 
     print("\n")
     print("======= Classement Finale =======")
-    for x in range(number_horse):
-        print(f"{x} -> {"Disqualifié" if classement_horse[x] == 0 else classement_horse[x]}")
+    nombre_a_afficher = type_race.value
+    for pos in range(nombre_a_afficher):
+        for x in range(number_horse):
+            if(classement_horse[x] == pos+1):
+                print(f"En position {pos+1} : {x}")
+    #print(f"{x} -> {"Disqualifié" if classement_horse[x] == 0 else classement_horse[x]}")
+
+
