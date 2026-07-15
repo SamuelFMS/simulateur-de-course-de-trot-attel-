@@ -1,10 +1,21 @@
 import utils
 from enum import Enum
 
+"""
+    Création d'un enum pour le type de course tierce, quatre, quinte
+"""
 class TypeRace(Enum):
     Tierce = 3
     Quatre = 4
     Quinte = 5
+
+"""
+    méthode permettant de verifier si une course est terminer
+    :param speedHorse (Liste de vitesse de cheval pour savoir si DQ)
+    :param distanceHorse (Quel distance a parcouru le cheval)
+    :param distance_win  (distance pour remporter)
+    :return boolean
+"""
 def coursesTerminer(speedHorse, distanceHorse, distance_win):
     for x in range(number_horse):
         if(speedHorse[x] == "DQ"):
@@ -14,10 +25,22 @@ def coursesTerminer(speedHorse, distanceHorse, distance_win):
         return False
     return True
 
+"""
+    méthode permettant de verifier si la chaine saisie est A ou B ou C
+    :param saisie
+    :return boolean
+"""
 def verifSaisieTypeRace(saisie):
     if saisie == "A" or (saisie == "B" or saisie == "C"):
         return True
     return False
+
+"""
+    méthode permettant de retourne une barre de progression du cheval en un string
+    :param distance
+    :param maxDistance 
+    :return chaine 
+"""
 def afficher_barre_de_progression(distance, maxDistance):
     taille_char = 40
     v = distance / maxDistance
