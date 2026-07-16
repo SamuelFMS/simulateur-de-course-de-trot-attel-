@@ -1,5 +1,14 @@
 import random
 
+
+"""
+    variables permettant de changer de couleur lors des prints
+"""
+RED = "\033[31m"
+GREEN = "\033[32m"
+BLUE = "\033[34m"
+RESET = "\033[0m"
+
 """
     methode permettant d'avoir un nombre entier aléatoire entre min et max
     :param min
