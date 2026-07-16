@@ -1,4 +1,5 @@
 from array import ArrayType
+from sys import maxsize
 
 import utils
 import Horse
@@ -59,8 +60,9 @@ def afficher_barre_de_progression(distance, maxDistance):
 """
 def getPositionInClassement(classement, horse):
     for x in range(len(classement)):
-        if horse.getNumber() == classement[x].getNumber():
-            return x
+        for y in range(len(classement[x])):
+            if horse.getNumber() == classement[x][y].getNumber():
+                return x
     return None
 if __name__ == '__main__':
     distance_win = 2400
@@ -75,7 +77,7 @@ if __name__ == '__main__':
     # Initialisation des cheveaux
     list_horse = []
     for x in range(number_horse):
-        list_horse.append(Horse.Horse(int(x)))
+        list_horse.append(Horse.Horse(int(x+1)))
     classement_horse = []
 
     #Type de course
@@ -94,7 +96,7 @@ if __name__ == '__main__':
                 print(f"{utils.RED}{horse.getNumber()} -> Disqualifié{utils.RESET}")
                 continue
             if(horse.getDistance() >= distance_win):
-                print(f"{utils.GREEN}{horse.getNumber()} -> Position {getPositionInClassement(classement_horse, horse)}{utils.RESET}")
+                print(f"{utils.GREEN}{horse.getNumber()} -> Position {getPositionInClassement(classement_horse, horse)+1}{utils.RESET}")
                 continue
             print(f"{horse.getNumber()} -> {afficher_barre_de_progression(horse.getDistance(), distance_win)} ({horse.getDistance()}/{distance_win}) vitesse: {horse.getSpeed()}")
 
@@ -102,15 +104,35 @@ if __name__ == '__main__':
             horse.update_speed()
             horse.update_distance()
             if horse.getDistance() >= distance_win:
-                classement_horse.append(horse)
+                finished_horse_round.append(horse)
+        # Effectuer le classement en fonction de la distance parcourus si meme distance alors egaliter
+        while(len(finished_horse_round) > 0):
+            maxDistance = max(finished_horse_round, key=lambda horse: horse.getDistance()).getDistance()
+            classement_horse.append([])
+            resNumber = []
+            # Ajouter au classement celui ou ceux qui ont la distance maximum
+            for x in range(len(finished_horse_round)):
+                if(finished_horse_round[x].getDistance() == maxDistance):
+                    resNumber.append(finished_horse_round[x].getNumber())
+                    classement_horse[-1].append(finished_horse_round[x])
+            # Les supprimer de la liste
+            for number in resNumber:
+                for i in range(len(finished_horse_round)):
+                    if finished_horse_round[i].getNumber() == number:
+                        finished_horse_round.pop(i)
+                        break
+
 
         input("Next? ")
         print("\n")
 
-    print("\n")
+    #Affichage du classement finale
     print("======= Classement Finale =======")
     nombre_a_afficher = type_race.value
     for pos in range(nombre_a_afficher):
-        print(f"En {pos+1}{"ere" if pos==0 else "eme"} place : Cheval n°{classement_horse[pos].getNumber()}")
+        res_cheval = ""
+        for horse in classement_horse[pos]:
+            res_cheval += f"Cheval n°{horse.getNumber()} "
+        print(f"En {pos+1}{"ere" if pos==0 else "eme"} place : {res_cheval}")
 
 
