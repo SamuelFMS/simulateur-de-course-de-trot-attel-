@@ -1,4 +1,7 @@
+from array import ArrayType
+
 import utils
+import Horse
 from enum import Enum
 
 """
@@ -11,19 +14,19 @@ class TypeRace(Enum):
 
 """
     méthode permettant de verifier si une course est terminer
-    :param speedHorse (Liste de vitesse de cheval pour savoir si DQ)
-    :param distanceHorse (Quel distance a parcouru le cheval)
+    :param horse (Liste de class Horse) 
     :param distance_win  (distance pour remporter)
     :return boolean
 """
-def coursesTerminer(speedHorse, distanceHorse, distance_win):
-    for x in range(number_horse):
-        if(speedHorse[x] == "DQ"):
+def coursesTerminer(horses, distance_win):
+    for horse in horses:
+        if horse.is_disqualified():
             continue
-        if(distanceHorse[x] >= distance_win):
+        if horse.getDistance() >= distance_win:
             continue
         return False
     return True
+
 
 """
     méthode permettant de verifier si la chaine saisie est A ou B ou C
@@ -48,19 +51,19 @@ def afficher_barre_de_progression(distance, maxDistance):
     x = taille_char - c
     return ((c*"=") + (x*"-"))
 
+"""
+    méthode permettant de retourne la position du cheval dans le classement
+    :param classemet (liste de cheval)
+    :param horse
+    :return int 
+"""
+def getPositionInClassement(classement, horse):
+    for x in range(len(classement)):
+        if horse.getNumber() == classement[x].getNumber():
+            return x
+    return None
 if __name__ == '__main__':
-    speed_per_dice_roll = {0: [0, 1, 1, 1, 2, 2],
-                           1: [0,0,1,1,1,2],
-                           2: [0,0,1,1,1,2],
-                           3: [-1,0,0,1,1,1],
-                           4: [-1,0,0,0,1,1],
-                           5: [-2,-1,0,0,0,1],
-                           6:[-2,-1,0,0,0,"DQ"], }
-
-    speed_horse = [0,23,46,69,92,115,138]
-
     distance_win = 2400
-    nouveauclassement = 1
 
     #Nombre de cheval
     while True:
@@ -69,47 +72,37 @@ if __name__ == '__main__':
             break
         print("Nombre entre 12 et 20 attendus")
 
-    #Type de course
+    # Initialisation des cheveaux
+    list_horse = []
+    for x in range(number_horse):
+        list_horse.append(Horse.Horse(int(x)))
+    classement_horse = []
 
+    #Type de course
     saisiTypeDeCourse = utils.askCondition(verifSaisieTypeRace, "Voulez vous faire un tiercé (A) ou un quatré (B) ou un quinté (C)")
     type_race = TypeRace.Tierce if saisiTypeDeCourse == "A" else TypeRace.Quatre if saisiTypeDeCourse == "B" else TypeRace.Quinte
-    print(type_race)
 
-    current_speed_horse = [0] * number_horse
-    current_distance_horse = [0] * number_horse
-    classement_horse = [0] * number_horse
     nombreTour = 0
-    while(True):
-        if(coursesTerminer(current_speed_horse, current_distance_horse, distance_win)):
-            break
+    while not coursesTerminer(list_horse, distance_win):
+        # Effectuer un tour
         nombreTour += 1
         print(f"Tour {nombreTour}")
-        #Effectuer un tour
-        newSpeed = 0
-        currentDistance = 0
+        finished_horse_round = []
+        for horse in list_horse:
+            # Affichage parcours pour chaque cheval
+            if horse.is_disqualified():
+                print(f"{utils.RED}{horse.getNumber()} -> Disqualifié{utils.RESET}")
+                continue
+            if(horse.getDistance() >= distance_win):
+                print(f"{utils.GREEN}{horse.getNumber()} -> Position {getPositionInClassement(classement_horse, horse)}{utils.RESET}")
+                continue
+            print(f"{horse.getNumber()} -> {afficher_barre_de_progression(horse.getDistance(), distance_win)} ({horse.getDistance()}/{distance_win}) vitesse: {horse.getSpeed()}")
 
-        classement = nouveauclassement
-        for x in range(number_horse):
-            if current_speed_horse[x] == "DQ":
-                print(f"{utils.RED}{x} -> Disqualifié{utils.RESET}")
-                continue
-            if(current_distance_horse[x] >= distance_win):
-                print(f"{utils.GREEN}{x} -> Position {classement_horse[x]}{utils.RESET}")
-                continue
-            print(f"{x} -> {afficher_barre_de_progression(current_distance_horse[x], distance_win)} ({current_distance_horse[x]}/{distance_win}) vitesse: {current_speed_horse[x]}")
-            resultatDe = utils.rollADiche()
-            currentSpeed = current_speed_horse[x]
-            if speed_per_dice_roll[currentSpeed][resultatDe - 1] == "DQ":
-                print("Disqualifié")
-                current_speed_horse[x] = "DQ"
-                continue
-            newSpeed = currentSpeed + speed_per_dice_roll[currentSpeed][resultatDe - 1]
-            current_speed_horse[x] = newSpeed
-            currentDistance = current_distance_horse[x] + speed_horse[newSpeed]
-            current_distance_horse[x] = currentDistance
-            if (current_distance_horse[x] >= distance_win):
-                classement_horse[x] = classement
-                nouveauclassement+=1
+            # Avancer
+            horse.update_speed()
+            horse.update_distance()
+            if horse.getDistance() >= distance_win:
+                classement_horse.append(horse)
 
         input("Next? ")
         print("\n")
@@ -118,14 +111,6 @@ if __name__ == '__main__':
     print("======= Classement Finale =======")
     nombre_a_afficher = type_race.value
     for pos in range(nombre_a_afficher):
-        res = []
-        for x in range(number_horse):
-            if(classement_horse[x] == pos+1):
-                res.append(x)
-        resString = ""
-        if len(res) != 0:
-            for t in res:
-                resString += "Cheval " + str(t) + " "
-            print(f"En position {pos+1} : {resString}")
+        print(f"En {pos+1}{"ere" if pos==0 else "eme"} place : Cheval n°{classement_horse[pos].getNumber()}")
 
 
