@@ -91,10 +91,10 @@ if __name__ == '__main__':
         classement = nouveauclassement
         for x in range(number_horse):
             if current_speed_horse[x] == "DQ":
-                print(f"{x} -> Disqualifié")
+                print(f"{utils.RED}{x} -> Disqualifié{utils.RESET}")
                 continue
             if(current_distance_horse[x] >= distance_win):
-                print(f"{x} -> {classement_horse[x]}")
+                print(f"{utils.GREEN}{x} -> Position {classement_horse[x]}{utils.RESET}")
                 continue
             print(f"{x} -> {afficher_barre_de_progression(current_distance_horse[x], distance_win)} ({current_distance_horse[x]}/{distance_win}) vitesse: {current_speed_horse[x]}")
             resultatDe = utils.rollADiche()
@@ -118,9 +118,14 @@ if __name__ == '__main__':
     print("======= Classement Finale =======")
     nombre_a_afficher = type_race.value
     for pos in range(nombre_a_afficher):
+        res = []
         for x in range(number_horse):
             if(classement_horse[x] == pos+1):
-                print(f"En position {pos+1} : {x}")
-    #print(f"{x} -> {"Disqualifié" if classement_horse[x] == 0 else classement_horse[x]}")
+                res.append(x)
+        resString = ""
+        if len(res) != 0:
+            for t in res:
+                resString += "Cheval " + str(t) + " "
+            print(f"En position {pos+1} : {resString}")
 
 
